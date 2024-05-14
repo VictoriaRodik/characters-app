@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi,  } from 'vitest';
 import CardsContainer from '../../src/components/CardsContainer/CardsContainer';
 import { useQuery } from '@tanstack/react-query';
 
@@ -21,13 +21,7 @@ const mockedData = [
 	},
 ];
 
-vi.mock('@tanstack/react-query', () => ({
-	useQuery: () => ({
-		data: mockedData,
-		isLoading: false,
-		error: null,
-	}),
-}));
+
 
 vi.mock('../../src/components/Card/Card', () => ({
 	__esModule: true,
@@ -43,32 +37,57 @@ vi.mock('../../src/components/Card/Card', () => ({
 
 
 describe('CardsContainer Component', () => {
-	beforeEach(() => {
-		render(<CardsContainer />);
-	});
 
-	//   it('should render loading text while data is loading', () => {
-	//     useQuery.mockReturnValueOnce({
-	//       isLoading: true,
-	//     });
+	  it('should render loading text while data is loading', async () => {
+        vi.mock('@tanstack/react-query', () => ({
+            useQuery: () => ({
+                data: null,
+                isLoading: true,
+                error: null,
+            }),
+        }));
+        render(<CardsContainer />); 
+        await waitFor(() => {
+            expect(screen.getByText('Loading...')).toBeInTheDocument();
+        });
+	  });
 
-	//     expect(screen.getByText('Loading...')).toBeInTheDocument();
-	//   });
+	  it('should render error message if there is an error', async() => {
+        vi.mock('@tanstack/react-query', () => ({
+            useQuery: () => ({
+              data: null,
+              isLoading: false,
+              error: { message: 'Failed' },
+            }),
+          }));
+          render(<CardsContainer />);
+          await waitFor(() => {
+            expect(screen.getByText('Error: Failed')).toBeInTheDocument();
+        });
+	  });
 
-	//   it('renders error message if there is an error', () => {
-	//     useQuery.mockReturnValueOnce({
-	//       error: { message: 'Failed to fetch data' },
-	//     });
-
-	//     expect(screen.getByText('Error: Failed to fetch data')).toBeInTheDocument();
-	//   });
-
-	it('renders characters correctly', () => {
+	it('should render characters correctly', () => {
+        vi.mock('@tanstack/react-query', () => ({
+            useQuery: () => ({
+                data: mockedData,
+                isLoading: false,
+                error: null,
+            }),
+        }));
+        render(<CardsContainer />);
 		expect(screen.getByText('Rick and Morty')).toBeInTheDocument();
 		expect(screen.getAllByTestId('card')).toHaveLength(mockedData.length);
 	});
 
-	it('filters characters correctly', () => {
+	it('should filter characters correctly', () => {
+        vi.mock('@tanstack/react-query', () => ({
+            useQuery: () => ({
+                data: mockedData,
+                isLoading: false,
+                error: null,
+            }),
+        }));
+        render(<CardsContainer />);
 		fireEvent.change(screen.getByPlaceholderText('Filter by name'), {
 			target: { value: 'Rick' },
 		});
@@ -76,7 +95,15 @@ describe('CardsContainer Component', () => {
 		expect(screen.queryByText('Location')).not.toBeInTheDocument();
 	});
 
-	it('sorts characters correctly', () => {
+	it('should sort characters correctly', () => {
+        vi.mock('@tanstack/react-query', () => ({
+            useQuery: () => ({
+                data: mockedData,
+                isLoading: false,
+                error: null,
+            }),
+        }));
+        render(<CardsContainer />);
 		fireEvent.change(screen.getByRole('combobox'), {
 			target: { value: 'status' },
 		});
