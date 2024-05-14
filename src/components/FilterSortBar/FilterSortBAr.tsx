@@ -28,7 +28,7 @@ const FilterSortBar: React.FC<FilterSortBarProps> = ({
 		<div className="flex flex-wrap justify-center md:justify-end gap-4 m-8">
 			<input
 				type="text"
-				placeholder="Filter by name..."
+				placeholder="Filter by name"
 				value={filter}
 				name="filter"
 				onChange={handleFilterChange}
