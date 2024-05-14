@@ -1,8 +1,8 @@
 import { Character } from "../entities/Character";
 
-export async function fetchCharacters(): Promise<Character[]> {
+export async function fetchCharacters(page: number): Promise<Character[]> {
   try {
-    const url = "https://rickandmortyapi.com/api/character";
+    const url =  `https://rickandmortyapi.com/api/character?page=${page}`;
 
     const response = await fetch(url);
     if (!response.ok) {
