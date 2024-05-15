@@ -1,5 +1,6 @@
 {
 	"name": "characters-app",
+  "homepage":"https://victoriarodik.github.io/characters-app",
 	"private": false,
 	"version": "0.0.0",
 	"type": "module",
